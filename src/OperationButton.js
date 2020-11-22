@@ -2,9 +2,9 @@ import React from "react";
 import "./Button.css";
 import "./OperationButton.css";
 
-export default function Button({ children, name, onClick }) {
+export default function Button({ children, onClick }) {
   return (
-    <div onClick={() => onClick(name)} className="button orange">
+    <div onClick={() => onClick(children)} className="button orange">
       {children}
     </div>
   );

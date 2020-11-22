@@ -5,12 +5,13 @@ import Button from "./Button";
 import OperationButton from "./OperationButton";
 
 function performOperation(firstNumber, secondNumber, operation) {
+  
   switch (operation) {
     case "+":
       return firstNumber + secondNumber;
     case "-":
       return firstNumber + secondNumber;
-    case "*":
+    case "x":
       return firstNumber * secondNumber;
     case "/":
       return firstNumber / secondNumber;
@@ -22,38 +23,49 @@ function performOperation(firstNumber, secondNumber, operation) {
 export default function Calculator() {
   const [clean, setClean] = useState(true);
   const [result, setResult] = useState(0);
-  const [lastNumber, setLastNumber] = useState(0);
-  const [newNumber, setNewNumber] = useState(0);
   const [operation, setOperation] = useState("");
+  const [currentNumber, setCurrentNumber] = useState(0);
+  const [previousNumber, setPreviousNumber] = useState(0);
+  const [eraseNumber, setEraseNumber] = useState(false)
 
   const handleClean = () => {
     setClean(true);
     setResult(0);
+    setPreviousNumber(0);
+    setCurrentNumber(0);
   };
 
   const handleNumberClick = (number) => {
-    if (lastNumber === result) {
-      setResult(parseFloat(number, 10));
-    } else {
-      setResult(parseFloat("" + result + number, 10));
+    // setCurrentNumber(() => currentNumber + number)
+    if (eraseNumber) {
+      setEraseNumber(false)
+      setResult(parseFloat("" + number, 10))
     }
+    else setResult(parseFloat("" + result + number, 10))
+    
     setClean(false);
   };
 
-  const handleOperationClick = (operation) => {
-    if (operation === "") {
-      setOperation(operation);
-      setLastNumber(result);
+  const handleOperationClick = (operationSign) => {
+    console.log(operationSign);
+    if (operationSign !== "=" && (operation === "" || operationSign !== operation)) {
+      setOperation(operationSign);
+      setPreviousNumber(result);
+      setEraseNumber(true)
+    } else if (operationSign === "=") {
+      console.log("ok");
+      setResult(
+        performOperation(previousNumber, result, operation)
+      );
     } else {
-      performOperation(lastNumber, newNumber, operation);
+      setResult(
+        performOperation(previousNumber, result, operationSign)
+      );
+      console.log(previousNumber);
+      console.log(result);
+      console.log(performOperation(previousNumber, result, operationSign));
     }
   };
-
-  const handleSum = () => {
-    setOperation("+");
-  };
-
-  const handleEqual = () => {};
 
   return (
     <div className="calculator">
@@ -69,7 +81,7 @@ export default function Calculator() {
           <Button onNumberClick={handleNumberClick} type="light-grey">
             %
           </Button>
-          <OperationButton name="division" onClick={handleOperationClick}>
+          <OperationButton onClick={handleOperationClick}>
             /
           </OperationButton>
         </div>
@@ -83,7 +95,7 @@ export default function Calculator() {
           <Button onNumberClick={handleNumberClick} type="dark-grey">
             9
           </Button>
-          <OperationButton name="division" onClick={handleOperationClick}>
+          <OperationButton onClick={handleOperationClick}>
             x
           </OperationButton>
         </div>
@@ -97,7 +109,7 @@ export default function Calculator() {
           <Button onNumberClick={handleNumberClick} type="dark-grey">
             6
           </Button>
-          <OperationButton name="division" onClick={handleOperationClick}>
+          <OperationButton onClick={handleOperationClick}>
             -
           </OperationButton>
         </div>
@@ -111,7 +123,7 @@ export default function Calculator() {
           <Button onNumberClick={handleNumberClick} type="dark-grey">
             3
           </Button>
-          <OperationButton name="division" onClick={handleOperationClick}>
+          <OperationButton onClick={handleOperationClick}>
             +
           </OperationButton>
         </div>
@@ -126,7 +138,7 @@ export default function Calculator() {
           <Button onNumberClick={handleNumberClick} type="dark-grey">
             ,
           </Button>
-          <OperationButton name="division" onClick={handleOperationClick}>
+          <OperationButton onClick={handleOperationClick}>
             =
           </OperationButton>
         </div>
